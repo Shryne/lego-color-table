@@ -11,6 +11,22 @@
     <properties>
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
+
+        <unirest.version>3.13.10</unirest.version>
+        <jsoup.version>1.15.2</jsoup.version>
     </properties>
-    
+
+    <dependencies>
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>${unirest.version}</version>
+            <classifier>standalone</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
+    </dependencies>
 </project>
