@@ -2,7 +2,7 @@ package com.shryne.colortable
 
 import org.jsoup.Jsoup
 
-val alreadyExistingColors = setOf("Black", "Pearl Dark Gray", "Pearl Light Gray",
+val alreadyExistingColors = listOf("Black", "Pearl Dark Gray", "Pearl Light Gray",
     "Dark Gray", "Dark Bluish Gray", "Light Gray", "Light Bluish Gray",
     "Very Light Gray", "Metallic Silver", "Flat Silver", "Glow In Dark White",
     "White", "Sand Red", "Red", "Dark Red", "Dark Brown", "Brown", "Dark Orange",
@@ -19,7 +19,7 @@ val alreadyExistingColors = setOf("Black", "Pearl Dark Gray", "Pearl Light Gray"
     "Trans-Dark Pink", "Trans-Dark Blue", "Trans-Medium Blue",
     "Trans-Light Blue", "Trans-Green", "Trans-Bright Green", "Trans-Neon Green",
     "Chrome Gold", "Chrome Silver"
-)
+).map { Color(it) }.toSet()
 
 fun main() {
     //println(Unirest.get()
@@ -30,13 +30,27 @@ fun main() {
             .get()
 
     val table = html.body().getElementById("id-main-legacy-table")
-    val rows =
-        table!!.getElementsByTag("table")[3].getElementsByTag("table").get(1)
-            .getElementsByTag("tr")
+    println(table!!.getElementsByTag("table")[3].getElementsByTag("table")[1])
+    val rows = table.getElementsByTag("table")[3].getElementsByTag("table")[1]
+        .getElementsByTag("tr")
 
-    val availableColors = rows
-        .map { it.getElementsByTag("td")[3].getElementsByTag("font").text() }
-        .toSet()
+    val availableColors = HashSet<Color>()
+    rows
+        .forEach {
+            if (it.getElementsByTag("td")[0].getElementsByTag("font").text().toIntOrNull() != null) {
+                availableColors.add(
+                    Color(
+                        name = it.getElementsByTag("td")[3].getElementsByTag("font")
+                            .text(),
+                        id = it.getElementsByTag("td")[0].getElementsByTag("font")
+                            .text().toInt(),
+                        selling = it.getElementsByTag("td")[3].getElementsByTag(
+                            "font"
+                        ).text().toIntOrNull() ?: 0
+                    )
+                )
+            }
+        }
 
     println(
         "These colors may be misspelled: \n${
@@ -45,4 +59,25 @@ fun main() {
     )
 
     println("These are the missing colors: \n${availableColors - alreadyExistingColors}")
+}
+
+class Color(val name: String, val id: Int = 0, val selling: Int = 0) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Color
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+
+    override fun toString(): String {
+        return "$name, id=$id, selling=$selling"
+    }
 }
