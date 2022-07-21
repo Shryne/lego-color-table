@@ -1,6 +1,11 @@
 package com.shryne.colortable
 
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import kong.unirest.ObjectMapper
+import kong.unirest.Unirest
 import org.jsoup.Jsoup
+import kotlin.system.exitProcess
 
 val alreadyExistingColors = listOf("Black", "Pearl Dark Gray", "Pearl Light Gray",
     "Dark Gray", "Dark Bluish Gray", "Light Gray", "Light Bluish Gray",
@@ -22,9 +27,27 @@ val alreadyExistingColors = listOf("Black", "Pearl Dark Gray", "Pearl Light Gray
 ).map { Color(it) }.toSet()
 
 fun main() {
-    //println(Unirest.get()
-    //    .asString().body)
+    Unirest.config().objectMapper = object : ObjectMapper {
+        val mapper = com.fasterxml.jackson.databind.ObjectMapper().registerModule(
+            KotlinModule.Builder().build()
+        )
 
+        override fun <T : Any?> readValue(
+            value: String?,
+            valueType: Class<T>?
+        ): T = mapper.readValue(value, valueType)
+
+        override fun writeValue(value: Any?): String =
+            mapper.writeValueAsString(value)
+    }
+
+    val items = Unirest
+        .get("https://www.bricklink.com/ajax/clone/catalogifs.ajax?itemid=17084&color=11")
+        .asObject(Offers::class.java)
+        .body
+    println(items)
+
+    exitProcess(0)
     val html =
         Jsoup.connect("https://www.bricklink.com/catalogColors.asp?sortBy=N")
             .get()

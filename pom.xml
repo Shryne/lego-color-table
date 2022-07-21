@@ -14,6 +14,7 @@
 
         <unirest.version>3.13.10</unirest.version>
         <jsoup.version>1.15.2</jsoup.version>
+        <jackson-kotlin-module.version>2.13.3</jackson-kotlin-module.version>
     </properties>
 
     <dependencies>
@@ -22,6 +23,17 @@
             <artifactId>unirest-java</artifactId>
             <version>${unirest.version}</version>
             <classifier>standalone</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-objectmapper-jackson</artifactId>
+            <version>${unirest.version}</version>
+            <classifier>standalone</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+            <version>${jackson-kotlin-module.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
